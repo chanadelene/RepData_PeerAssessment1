@@ -5,6 +5,13 @@ output:
     keep_md: true
 ---
 
+Start by loading the packages for data manipulation and plotting
+
+```{r}
+library(ggplot2)
+library(scales)
+library(plyr)
+```
 
 ## Loading and preprocessing the data
 
@@ -19,7 +26,7 @@ for(i in 1:length(accel) ) {
   }
 ```
 
-We observe that the date variable is of the type Factor, we therefore recode it as a date variable.
+2. Recode Factor date as a date variable.
 
 ```{r}
 accel$date <- as.Date( accel$date, format = '%Y-%m-%d' )
@@ -28,14 +35,143 @@ str(accel$date)
 
 ## What is mean total number of steps taken per day?
 
+1. Compute the data needed for the plot
 
+```{r}
+tot.steps <- ddply(accel, .(date),
+                  summarize,
+                  total.steps = sum(steps)
+                  )
+head(tot.steps)
+```
+
+2. Make a histogram of the total number of steps taken each day
+
+```{r}
+tot.st.plot <- ggplot(tot.steps,
+                      aes(x = total.steps)
+                      )
+tot.st.plot <- tot.st.plot + geom_histogram()
+print(tot.st.plot)
+```
+
+3. Report the summary statistics, to see the mean and median.
+
+```{r}
+summary(tot.steps$total.steps)
+summary(tot.steps$total.steps)['Mean']
+summary(tot.steps$total.steps)['Median']
+```
 
 ## What is the average daily activity pattern?
 
+1. Compute data
 
+```{r}
+av.steps <- ddply(accel, .(interval),
+                  summarize,
+                  average.steps = mean(steps, na.rm=TRUE
+                                       )
+                  )
+head(av.steps)
+```
+
+2. Make a time series plot
+
+```{r}
+av.st.plot <- ggplot(av.steps,
+                     aes(interval, average.steps)
+                     )
+av.st.plot <- av.st.plot + geom_line()
+print(av.st.plot)
+```
+
+3. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
+
+```{r}
+summary(av.steps$average.steps)
+summary(av.steps$average.steps)['Max.']
+```
 
 ## Imputing missing values
 
+1. Calculate and report the total number of missing values in the dataset
 
+```{r}
+table( complete.cases(accel) )
+```
+
+2. Create a new data frame and impute missing values using interval averages.
+
+```{r}
+imp.accel <- accel
+imp.accel$steps <- ifelse( is.na(imp.accel$steps),
+                     av.steps$average.steps[match(imp.accel$interval, av.steps$interval) ],
+                     imp.accel$steps )
+table( complete.cases(accel) )
+table( complete.cases(imp.accel) )
+```
+
+```{r}
+tot.imp.steps <- ddply(imp.accel, .(date),
+                  summarize,
+                  total.steps = sum(steps)
+                  )
+head(tot.imp.steps)
+```
+
+3. Make a histogram of the total number of steps taken each day
+
+```{r}
+tot.imp.st.plot <- ggplot(tot.imp.steps,
+                      aes(x = total.steps)
+                      )
+tot.imp.st.plot <- tot.imp.st.plot + geom_histogram()
+print(tot.imp.st.plot)
+```
+
+4. Calculate and report the mean and median total number of steps taken per day.
+
+```{r}
+summary(tot.imp.steps$total.steps)
+summary(tot.imp.steps$total.steps)['Mean']
+summary(tot.imp.steps$total.steps)['Median']
+```
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+1. Create a day of the week variable in the accel data frame, then we create a list of weekdays and weekend days.
+
+```{r}
+accel$day <- weekdays(accel$date)
+
+w.day <- c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
+w.e.day <- c('Saturday', 'Sunday')
+
+accel$weekpart <- ifelse(accel$day %in% w.day, 'weekday', 'weekend')
+head(accel)
+table(accel$weekpart)
+```
+
+2. Make a panel plot containing a time series plot
+
+```{r}
+av.w.e.steps <- ddply(accel, .(interval, weekpart),
+                  summarize,
+                  average.steps = mean(steps, na.rm=TRUE
+                                       )
+                  )
+head(av.w.e.steps)
+```
+
+```{r}
+av.w.e.st.plot <- ggplot(av.w.e.steps,
+                     aes(interval, average.steps)
+                     )
+av.w.e.st.plot <- av.w.e.st.plot + geom_line()
+av.w.e.st.plot <- av.w.e.st.plot + facet_grid(weekpart ~ .)
+print(av.w.e.st.plot)
+```
+
+
+
