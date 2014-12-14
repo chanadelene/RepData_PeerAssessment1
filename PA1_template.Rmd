@@ -7,7 +7,7 @@ output:
 
 Start by loading the packages for data manipulation and plotting
 
-```{r}
+```{r echo=TRUE, eval=TRUE }
 library(ggplot2)
 library(scales)
 library(plyr)
@@ -17,7 +17,7 @@ library(plyr)
 
 1. Load the data (i.e. read.csv())
 
-```{r}
+```{r, echo=TRUE, eval=TRUE}
 unzip('activity.zip')
 accel <- read.csv('activity.csv', header=TRUE, sep = ',')
 str(accel)
@@ -28,7 +28,7 @@ for(i in 1:length(accel) ) {
 
 2. Recode Factor date as a date variable.
 
-```{r}
+```{r echo=TRUE, eval=TRUE}
 accel$date <- as.Date( accel$date, format = '%Y-%m-%d' )
 str(accel$date)
 ```
@@ -37,7 +37,7 @@ str(accel$date)
 
 1. Compute the data needed for the plot
 
-```{r}
+```{r echo=TRUE, eval=TRUE }
 tot.steps <- ddply(accel, .(date),
                   summarize,
                   total.steps = sum(steps)
@@ -47,7 +47,7 @@ head(tot.steps)
 
 2. Make a histogram of the total number of steps taken each day
 
-```{r}
+```{r DaystepsHist, echo=TRUE, eval=TRUE }
 tot.st.plot <- ggplot(tot.steps,
                       aes(x = total.steps)
                       )
@@ -57,7 +57,7 @@ print(tot.st.plot)
 
 3. Report the summary statistics, to see the mean and median.
 
-```{r}
+```{r echo=TRUE, eval=TRUE }
 summary(tot.steps$total.steps)
 summary(tot.steps$total.steps)['Mean']
 summary(tot.steps$total.steps)['Median']
@@ -67,18 +67,18 @@ summary(tot.steps$total.steps)['Median']
 
 1. Compute data
 
-```{r}
+```{r echo=TRUE, eval=TRUE }
 av.steps <- ddply(accel, .(interval),
                   summarize,
                   average.steps = mean(steps, na.rm=TRUE
                                        )
                   )
 head(av.steps)
-```
+``` 
 
 2. Make a time series plot
 
-```{r}
+```{r dailytrend, echo=TRUE, eval=TRUE }
 av.st.plot <- ggplot(av.steps,
                      aes(interval, average.steps)
                      )
@@ -88,7 +88,7 @@ print(av.st.plot)
 
 3. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
-```{r}
+```{r echo=TRUE, eval=TRUE }
 summary(av.steps$average.steps)
 summary(av.steps$average.steps)['Max.']
 ```
@@ -97,13 +97,13 @@ summary(av.steps$average.steps)['Max.']
 
 1. Calculate and report the total number of missing values in the dataset
 
-```{r}
+```{r echo=TRUE, eval=TRUE}
 table( complete.cases(accel) )
 ```
 
 2. Create a new data frame and impute missing values using interval averages.
 
-```{r}
+```{r echo=TRUE, eval=TRUE}
 imp.accel <- accel
 imp.accel$steps <- ifelse( is.na(imp.accel$steps),
                      av.steps$average.steps[match(imp.accel$interval, av.steps$interval) ],
@@ -112,7 +112,7 @@ table( complete.cases(accel) )
 table( complete.cases(imp.accel) )
 ```
 
-```{r}
+```{r echo=TRUE, eval=TRUE }
 tot.imp.steps <- ddply(imp.accel, .(date),
                   summarize,
                   total.steps = sum(steps)
@@ -122,7 +122,7 @@ head(tot.imp.steps)
 
 3. Make a histogram of the total number of steps taken each day
 
-```{r}
+```{r imputedHist, echo=TRUE, eval=TRUE }
 tot.imp.st.plot <- ggplot(tot.imp.steps,
                       aes(x = total.steps)
                       )
@@ -132,17 +132,18 @@ print(tot.imp.st.plot)
 
 4. Calculate and report the mean and median total number of steps taken per day.
 
-```{r}
+```{r echo=TRUE, eval=TRUE }
 summary(tot.imp.steps$total.steps)
 summary(tot.imp.steps$total.steps)['Mean']
 summary(tot.imp.steps$total.steps)['Median']
 ```
 
+
 ## Are there differences in activity patterns between weekdays and weekends?
 
 1. Create a day of the week variable in the accel data frame, then we create a list of weekdays and weekend days.
 
-```{r}
+```{r echo=TRUE, eval=TRUE}
 accel$day <- weekdays(accel$date)
 
 w.day <- c('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday')
@@ -155,7 +156,7 @@ table(accel$weekpart)
 
 2. Make a panel plot containing a time series plot
 
-```{r}
+```{r echo=TRUE, eval=TRUE }
 av.w.e.steps <- ddply(accel, .(interval, weekpart),
                   summarize,
                   average.steps = mean(steps, na.rm=TRUE
@@ -164,14 +165,14 @@ av.w.e.steps <- ddply(accel, .(interval, weekpart),
 head(av.w.e.steps)
 ```
 
-```{r}
+```{r weekdayweekend, echo=TRUE, eval=TRUE }
 av.w.e.st.plot <- ggplot(av.w.e.steps,
                      aes(interval, average.steps)
                      )
 av.w.e.st.plot <- av.w.e.st.plot + geom_line()
 av.w.e.st.plot <- av.w.e.st.plot + facet_grid(weekpart ~ .)
 print(av.w.e.st.plot)
-```
+``` 
 
 
 

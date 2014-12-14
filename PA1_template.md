@@ -92,7 +92,7 @@ print(tot.st.plot)
 ## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-5-1.png) 
+![](PA1_template_files/figure-html/DaystepsHist-1.png) 
 
 3. Report the summary statistics, to see the mean and median.
 
@@ -159,7 +159,7 @@ av.st.plot <- av.st.plot + geom_line()
 print(av.st.plot)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-8-1.png) 
+![](PA1_template_files/figure-html/dailytrend-1.png) 
 
 3. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
@@ -258,7 +258,7 @@ print(tot.imp.st.plot)
 ## stat_bin: binwidth defaulted to range/30. Use 'binwidth = x' to adjust this.
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-13-1.png) 
+![](PA1_template_files/figure-html/imputedHist-1.png) 
 
 4. Calculate and report the mean and median total number of steps taken per day.
 
@@ -289,6 +289,7 @@ summary(tot.imp.steps$total.steps)['Median']
 ## Median 
 ##  10770
 ```
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -357,7 +358,7 @@ av.w.e.st.plot <- av.w.e.st.plot + facet_grid(weekpart ~ .)
 print(av.w.e.st.plot)
 ```
 
-![](PA1_template_files/figure-html/unnamed-chunk-17-1.png) 
+![](PA1_template_files/figure-html/weekdayweekend-1.png) 
 
 
 
