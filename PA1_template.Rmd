@@ -8,7 +8,23 @@ output:
 
 ## Loading and preprocessing the data
 
+1. Load the data (i.e. read.csv())
 
+```{r}
+unzip('activity.zip')
+accel <- read.csv('activity.csv', header=TRUE, sep = ',')
+str(accel)
+for(i in 1:length(accel) ) {
+  str(accel[i])
+  }
+```
+
+We observe that the date variable is of the type Factor, we therefore recode it as a date variable.
+
+```{r}
+accel$date <- as.Date( accel$date, format = '%Y-%m-%d' )
+str(accel$date)
+```
 
 ## What is mean total number of steps taken per day?
 
